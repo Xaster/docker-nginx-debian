@@ -24,6 +24,7 @@ RUN cd \
         grep -o '/upx-[a-zA-Z0-9.]*-amd64_linux[.]tar[.]xz' | \
         sed -e 's~^/upx-~~' -e 's~\-amd64_linux\.tar\.xz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -37,6 +38,7 @@ RUN cd \
         grep -o '/jemalloc-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/jemalloc-~~' -e 's~\.tar\.bz2$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -48,6 +50,7 @@ RUN cd \
         grep -o '/antirez/redis/archive/[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/antirez/redis/archive/~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -59,6 +62,7 @@ RUN cd \
         grep -o 'openssl-[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^openssl-~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -70,6 +74,7 @@ RUN cd \
         grep -o '/download/nginx-[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/download/nginx-~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -81,6 +86,7 @@ RUN cd \
         grep -o '/nginx/njs/archive/[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/nginx/njs/archive/~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -92,6 +98,7 @@ RUN cd \
         grep -o '/ngx_cache_purge/archive/[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/ngx_cache_purge/archive/~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -108,6 +115,7 @@ RUN cd \
         grep -o '/incubator-pagespeed-ngx/archive/v[a-zA-Z0-9.]*-stable[.]tar[.]gz' | \
         sed -e 's~^/incubator-pagespeed-ngx/archive/v~~' -e 's~\-stable\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -124,6 +132,7 @@ RUN cd \
         grep -o '/ngx_http_redis-[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/ngx_http_redis-~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -135,6 +144,7 @@ RUN cd \
         grep -o '/ngx_devel_kit/archive/v[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/ngx_devel_kit/archive/v~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -146,6 +156,7 @@ RUN cd \
         grep -o '/set-misc-nginx-module/archive/v[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/set-misc-nginx-module/archive/v~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -157,6 +168,7 @@ RUN cd \
         grep -o '/echo-nginx-module/archive/v[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/echo-nginx-module/archive/v~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -168,6 +180,7 @@ RUN cd \
         grep -o '/redis2-nginx-module/archive/v[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/redis2-nginx-module/archive/v~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -179,6 +192,7 @@ RUN cd \
         grep -o '/srcache-nginx-module/archive/v[a-zA-Z0-9.]*[.]tar[.]gz' | \
         sed -e 's~^/srcache-nginx-module/archive/v~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
+        sed '/pre.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
@@ -294,6 +308,7 @@ RUN cd \
     && mkdir -p \
         /etc/nginx_default/conf.d \
         /var/log/nginx \
+        /var/run/nginx \
         /usr/share/nginx/html \
         /usr/share/nginx/html_default \
         /etc/certs \
