@@ -327,7 +327,7 @@ RUN cd \
     && apt purge --auto-remove -y $(cat build-deps.txt | grep "Unpacking " | cut -d " " -f 2) \
     && apt install -y tzdata gettext-base \
     && apt clean \
-    && tar -kxvpPf run-deps.tar >/dev/null 2>&1 \
+    && tar -kxpPf run-deps.tar \
     && rm -rf \
         $HOME/* \
         /bin/upx \
