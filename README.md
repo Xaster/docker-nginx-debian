@@ -3,9 +3,9 @@ Docker: Nginx With All Official Modules And Some Third Party Modules (Based On D
 
 # Third Party Modules
 ```
-Jemalloc
-Redis
-OpenSSL
+Jemalloc (Share Library)
+Redis (Software)
+OpenSSL (Just Build Into The Nginx)
 Nginx Module:Cache-Purge
 Nginx Module:Brotli
 Nginx Module:PageSpeed
@@ -33,7 +33,16 @@ $ docker run -d \
     -v /REDIS_LOG_DIR:/var/log/redis \
     -v /REDIS_DATA_DIR:/var/lib/redis \
     -v /REDIS_PID_DIR:DATA/var/run/redis \
-    -p 80:80 -p 443:443 \
+    -p 80:80 \
+    -p 443:443 \
+    -p 6379:6379 \
     -e TIMEZONE=YOUR_TIME_ZONE \
     xaster/docker-nginx-debian
+```
+
+# Note
+```
+80=http listen port
+443=https listen port
+6379=redis listen port
 ```

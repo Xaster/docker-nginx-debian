@@ -44,15 +44,15 @@ RUN cd \
     && wget https://github.com/jemalloc/jemalloc/releases/download/${JEMALLOC_VERSION}/jemalloc-${JEMALLOC_VERSION}.tar.bz2 \
     && tar -xjvf jemalloc-${JEMALLOC_VERSION}.tar.bz2 \
     && JEMALLOC_DIR=$(find $HOME -maxdepth 1 -mindepth 1 -type d -name "*jemalloc-${JEMALLOC_VERSION}*") \
-    && REDIS_VERSION=$(curl -sS --fail https://redis.io/download | \
-        grep -o '/releases/redis-[a-zA-Z0-9.]*[.]tar[.]gz' | \
-        sed -e 's~^/releases/redis-~~' -e 's~\.tar\.gz$~~' | \
+    && REDIS_VERSION=$(curl -sS --fail https://github.com/antirez/redis/releases | \
+        grep -o '/antirez/redis/archive/[a-zA-Z0-9.]*[.]tar[.]gz' | \
+        sed -e 's~^/antirez/redis/archive/~~' -e 's~\.tar\.gz$~~' | \
         sed '/alpha.*/Id' | \
         sed '/beta.*/Id' | \
         sed '/rc.*/Id' | \
         sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
         tail -n 1) \
-    && wget http://download.redis.io/releases/redis-${REDIS_VERSION}.tar.gz \
+    && wget -O redis-${REDIS_VERSION}.tar.gz https://github.com/antirez/redis/archive/${REDIS_VERSION}.tar.gz \
     && tar -xvzf redis-${REDIS_VERSION}.tar.gz \
     && REDIS_DIR=$(find $HOME -maxdepth 1 -mindepth 1 -type d -name "*redis-${REDIS_VERSION}*") \
     && OPENSSL_VERSION=$(curl -sS --fail https://www.openssl.org/source/ | \
@@ -191,6 +191,7 @@ RUN cd \
     && make -j`nproc` \
     && make install_lib_shared -j`nproc` \
     && strip /usr/lib/libjemalloc* \
+    && sed -ri 's!^(#define CONFIG_DEFAULT_PROTECTED_MODE) 1$!\1 0!' $REDIS_DIR/src/server.h \
     && cd $REDIS_DIR \
     && make -j`nproc` \
     && make PREFIX=/usr install -j`nproc` \
@@ -327,7 +328,7 @@ RUN cd \
     && apt purge --auto-remove -y $(cat build-deps.txt | grep "Unpacking " | cut -d " " -f 2) \
     && apt install -y tzdata gettext-base \
     && apt clean \
-    && tar -kxpPf run-deps.tar \
+    && tar --skip-old-files -xpPf run-deps.tar \
     && rm -rf \
         $HOME/* \
         /bin/upx \
@@ -336,9 +337,7 @@ RUN cd \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
 VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "/var/cache/nginx", "/var/run/nginx", "/etc/redis", "/var/log/redis", "/var/lib/redis", "/var/run/redis"]
-EXPOSE 80 443
+EXPOSE 80 443 6379
 ENV TIMEZONE=""
-
-STOPSIGNAL SIGTERM
 
 CMD ["/usr/bin/Run.sh"]
