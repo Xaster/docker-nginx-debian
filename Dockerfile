@@ -8,7 +8,6 @@ RUN cd \
         curl \
         git \
         bzip2 \
-        xz-utils \
         build-essential \
         xsltproc \
         uuid-dev \
@@ -20,20 +19,6 @@ RUN cd \
         libperl-dev \
         | tee build-deps.txt \
     && update-ca-certificates \
-    && UPX_VERSION=$(curl -sS --fail https://github.com/upx/upx/releases | \
-        grep -o '/upx-[a-zA-Z0-9.]*-amd64_linux[.]tar[.]xz' | \
-        sed -e 's~^/upx-~~' -e 's~\-amd64_linux\.tar\.xz$~~' | \
-        sed '/alpha.*/Id' | \
-        sed '/pre.*/Id' | \
-        sed '/beta.*/Id' | \
-        sed '/rc.*/Id' | \
-        sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -g | \
-        tail -n 1) \
-    && wget https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-amd64_linux.tar.xz \
-    && xz -d upx-${UPX_VERSION}-amd64_linux.tar.xz \
-    && tar -xvf upx-${UPX_VERSION}-amd64_linux.tar \
-    && UPX_DIR=$(find $HOME -maxdepth 1 -mindepth 1 -type d -name "*upx-${UPX_VERSION}-amd64_linux*") \
-    && cp -f $UPX_DIR/upx /bin \
     && JEMALLOC_VERSION=$(curl -sS --fail https://github.com/jemalloc/jemalloc/releases | \
         grep -o '/jemalloc-[a-zA-Z0-9.]*[.]tar[.]bz2' | \
         sed -e 's~^/jemalloc-~~' -e 's~\.tar\.bz2$~~' | \
@@ -126,7 +111,7 @@ RUN cd \
     && cd "$NPS_DIR" \
     && [ -e scripts/format_binary_url.sh ] && PSOL_URL=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
     && wget ${PSOL_URL} \
-    && tar -xzvf $(basename ${PSOL_URL}) \
+    && tar -xvzf $(basename ${PSOL_URL}) \
     && cd \
     && NHR_VERSION=$(curl -sS --fail https://www.nginx.com/resources/wiki/modules/redis/ | \
         grep -o '/ngx_http_redis-[a-zA-Z0-9.]*[.]tar[.]gz' | \
@@ -210,8 +195,6 @@ RUN cd \
     && make -j`nproc` \
     && make PREFIX=/usr install -j`nproc` \
     && strip /usr/bin/redis* \
-    && find /usr/bin -name "redis*" -type f | \
-        xargs upx  \
     && cd $NGINX_DIR \
     && ./configure \
         --prefix=/etc/nginx \
@@ -274,8 +257,6 @@ RUN cd \
     && make install -j`nproc` \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
-    && find /usr/sbin -name "nginx*" -type f | \
-        xargs upx \
     && cd \
     && adduser  \
         --system  \
@@ -346,7 +327,6 @@ RUN cd \
     && tar --skip-old-files -xpPf run-deps.tar \
     && rm -rf \
         $HOME/* \
-        /bin/upx \
         /var/lib/apt/lists/* \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
