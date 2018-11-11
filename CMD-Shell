@@ -1,4 +1,10 @@
 #!/bin/sh
+touch /var/log/nginx/access.log
+chmod 640 /var/log/nginx/access.log
+chown nginx:adm /var/log/nginx/access.log
+touch /var/log/nginx/error.log
+chmod 640 /var/log/nginx/error.log
+chown nginx:adm /var/log/nginx/error.log
 test -f '/etc/redis/redis.conf' || cp -a /etc/redis_default/redis.conf /etc/redis/redis.conf
 test -f '/etc/redis/redis.conf.default' || cp -a /etc/redis_default/redis.conf /etc/redis/redis.conf.default
 test -f '/etc/nginx/fastcgi.conf' || cp /etc/nginx_default/fastcgi.conf /etc/nginx/fastcgi.conf
@@ -34,4 +40,4 @@ if [ $? -ne 0 ];then
 fi
 redis-server /etc/redis/redis.conf
 nginx -c /etc/nginx/nginx.conf
-bash
+sh

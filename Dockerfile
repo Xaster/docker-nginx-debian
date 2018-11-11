@@ -327,12 +327,10 @@ RUN cd \
     && tar --skip-old-files -xpPf run-deps.tar \
     && rm -rf \
         $HOME/* \
-        /var/lib/apt/lists/* \
-    && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+        /var/lib/apt/lists/*
 
 VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "/var/cache/nginx", "/var/run/nginx", "/etc/redis", "/var/log/redis", "/var/lib/redis", "/var/run/redis"]
 EXPOSE 80 443 6379
 ENV TIMEZONE=""
 
-CMD ["/usr/bin/CMD-Shell"]
+CMD ["CMD-Shell"]
