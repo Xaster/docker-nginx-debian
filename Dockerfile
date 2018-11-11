@@ -308,8 +308,8 @@ RUN cd \
     && wget -O /usr/share/nginx/html_default/50x.html https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/usr/share/nginx/html/50x.html \
     && wget -O /usr/share/nginx/html_default/index.html https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/usr/share/nginx/html/index.html \
     && chown -R nginx:nginx /usr/share/nginx/html \
-    && wget -O /usr/bin/Run.sh https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/Run.sh \
-    && chmod +x /usr/bin/Run.sh \
+    && wget -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/CMD-Shell \
+    && chmod +x /usr/bin/CMD-Shell \
     && ldd /usr/lib/libjemalloc* \
         /usr/bin/redis* \
         /usr/sbin/nginx* \
@@ -335,4 +335,4 @@ VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "
 EXPOSE 80 443 6379
 ENV TIMEZONE=""
 
-CMD ["/usr/bin/Run.sh"]
+CMD ["/usr/bin/CMD-Shell"]
