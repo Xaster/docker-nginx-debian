@@ -287,12 +287,11 @@ RUN cd \
         --quiet \
         nginx \
     && mkdir -p \
+        /usr/share/nginx/html \
         /etc/nginx_default/conf.d \
+        /etc/certs \
         /var/log/nginx \
         /var/run/nginx \
-        /usr/share/nginx/html \
-        /usr/share/nginx/html_default \
-        /etc/certs \
     && rm -rf \
         /etc/nginx/nginx.conf \
         /etc/nginx/nginx.conf.default \
@@ -301,12 +300,10 @@ RUN cd \
         /etc/nginx/mime.types.default \
         /etc/nginx/fastcgi_params.default \
         /etc/nginx/fastcgi.conf.default \
-        /etc/nginx/html \
     && mv -f /etc/nginx/* /etc/nginx_default \
     && wget -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/nginx.conf \
     && wget -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/conf.d/default.conf \
-    && wget -O /usr/share/nginx/html_default/50x.html https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/usr/share/nginx/html/50x.html \
-    && wget -O /usr/share/nginx/html_default/index.html https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/usr/share/nginx/html/index.html \
+    && mv -f /etc/nginx/html /usr/share/nginx/html_default \
     && chown -R nginx:nginx /usr/share/nginx/html \
     && wget -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/CMD-Shell \
     && chmod +x /usr/bin/CMD-Shell \
@@ -327,7 +324,9 @@ RUN cd \
     && tar --skip-old-files -xpPf run-deps.tar \
     && rm -rf \
         $HOME/* \
-        /var/lib/apt/lists/*
+        /var/lib/apt/lists/*\
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
 VOLUME ["/usr/share/nginx/html", "/etc/nginx", "/etc/certs", "/var/log/nginx", "/var/cache/nginx", "/var/run/nginx", "/etc/redis", "/var/log/redis", "/var/lib/redis", "/var/run/redis"]
 EXPOSE 80 443 6379

@@ -1,8 +1,4 @@
 #!/bin/bash
-touch /var/log/nginx/access.log
-chown nginx:adm /var/log/nginx/access.log
-touch /var/log/nginx/error.log
-chown nginx:adm /var/log/nginx/error.log
 test -f '/etc/redis/redis.conf' || cp -a /etc/redis_default/redis.conf /etc/redis/redis.conf
 test -f '/etc/redis/redis.conf.default' || cp -a /etc/redis_default/redis.conf /etc/redis/redis.conf.default
 test -f '/etc/nginx/fastcgi.conf' || cp /etc/nginx_default/fastcgi.conf /etc/nginx/fastcgi.conf
@@ -34,8 +30,9 @@ fi
 find /usr/share/nginx/html -name "index.*" | grep -q "index."
 if [ $? -ne 0 ];then
   cp /usr/share/nginx/html_default/index.html /usr/share/nginx/html/index.html
-  cp /usr/share/nginx/html_default/50x.html /usr/share/nginx/html/50x.html
+  if [ ! -f "/usr/share/nginx/html/50x.html" ];then
+    cp /usr/share/nginx/html_default/50x.html /usr/share/nginx/html/50x.html
+  fi
 fi
 redis-server /etc/redis/redis.conf
-nginx -c /etc/nginx/nginx.conf
-bash
+nginx -g 'daemon off;'
