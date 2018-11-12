@@ -292,6 +292,8 @@ RUN cd \
         /etc/certs \
         /var/log/nginx \
         /var/run/nginx \
+    && mv -f /etc/nginx/html /usr/share/nginx/html_default \
+    && chown -R nginx:nginx /usr/share/nginx/html \
     && rm -rf \
         /etc/nginx/nginx.conf \
         /etc/nginx/nginx.conf.default \
@@ -303,8 +305,6 @@ RUN cd \
     && mv -f /etc/nginx/* /etc/nginx_default \
     && wget -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/nginx.conf \
     && wget -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/conf.d/default.conf \
-    && mv -f /etc/nginx/html /usr/share/nginx/html_default \
-    && chown -R nginx:nginx /usr/share/nginx/html \
     && wget -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/CMD-Shell \
     && chmod +x /usr/bin/CMD-Shell \
     && ldd /usr/lib/libjemalloc* \
