@@ -28,11 +28,11 @@ $ docker run -d \
     -v /NGINX_CERTS_DIR:/etc/certs \
     -v /NGINX_LOG_DIR:/var/log/nginx \
     -v /NGINX_CACHE_DIR:/var/cache/nginx \
-    -v /NGINX_PID_DIR:/var/run/nginx \
+    -v /NGINX_RUN_DIR:/var/run/nginx \
     -v /REDIS_CONFIG_DIR:/etc/redis \
     -v /REDIS_LOG_DIR:/var/log/redis \
     -v /REDIS_DATA_DIR:/var/lib/redis \
-    -v /REDIS_PID_DIR:DATA/var/run/redis \
+    -v /REDIS_RUN_DIR:DATA/var/run/redis \
     -p 80:80 \
     -p 443:443 \
     -p 6379:6379 \
