@@ -287,11 +287,12 @@ RUN cd \
     && cat software-deps.txt \
         symlink-source.txt | \
         sort -u | \
-        xargs tar -cvpPf soft-package.tar \
+        xargs tar -cvpPf software-package.tar \
     && mkdir -p \
         /etc/redis \
         /etc/redis_default \
         /var/log/redis \
+        /var/lib/redis \
         /var/run/redis \
     && adduser  \
         --system  \
@@ -310,9 +311,11 @@ RUN cd \
     && chmod 750 /var/lib/redis \
     && mkdir -p \
         /usr/share/nginx/html \
+        /usr/share/nginx/html_default \
         /etc/nginx_default/conf.d \
         /etc/certs \
         /var/log/nginx \
+        /var/cache/nginx \
         /var/run/nginx \
     && adduser \
         --system \
@@ -322,7 +325,10 @@ RUN cd \
         --disabled-login \
         --quiet \
         nginx \
-    && mv -f /etc/nginx/html /usr/share/nginx/html_default \
+    && mv -f /etc/nginx/html/index.html \
+        /etc/nginx/html/50x.html \
+        /usr/share/nginx/html_default \
+    && rm -rf /etc/nginx/html \
     && chown -R nginx:nginx /usr/share/nginx/html \
     && mv -f /etc/nginx/* /etc/nginx_default \
     && wget -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/nginx.conf \
@@ -331,11 +337,11 @@ RUN cd \
     && chmod +x /usr/bin/CMD-Shell \
     && apt purge --auto-remove -y \
         $(cat build-deps.txt | \
-	grep "Unpacking " | \
-	cut -d " " -f 2) \
+        grep "Unpacking " | \
+        cut -d " " -f 2) \
     && apt install -y tzdata \
+    && tar --skip-old-files -xpPf software-package.tar \
     && apt clean \
-    && tar --skip-old-files -xpPf soft-package.tar \
     && rm -rf \
         $HOME/* \
         /var/lib/apt/lists/*\
