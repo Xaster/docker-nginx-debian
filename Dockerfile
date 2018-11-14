@@ -17,6 +17,7 @@ RUN cd \
         libgd-dev \
         libgeoip-dev \
         libperl-dev \
+        gettext-base \
         | tee build-deps.txt \
     && update-ca-certificates \
     && JEMALLOC_VERSION=$(curl -sS --fail https://github.com/jemalloc/jemalloc/releases | \
@@ -258,42 +259,6 @@ RUN cd \
     && strip /usr/sbin/nginx* \
     && strip /usr/lib/nginx/modules/*.so \
     && cd \
-    && adduser  \
-        --system  \
-        --home /var/lib/redis \
-        --shell /bin/false \
-        --group \
-        --disabled-login \
-        --quiet \
-        redis \
-    && mkdir -p \
-        /etc/redis \
-        /etc/redis_default \
-        /var/log/redis \
-        /var/run/redis \
-    && wget -O /etc/redis_default/redis.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/redis/redis.conf \
-    && chown redis:redis /etc/redis_default/redis.conf \
-    && chmod 640 /etc/redis_default/redis.conf \
-    && chown redis:adm /var/log/redis \
-    && chmod 02750 /var/log/redis \
-    && chown redis:redis /var/run/redis \
-    && chmod 750 /var/lib/redis \
-    && adduser \
-        --system \
-        --home /var/cache/nginx \
-        --shell /bin/false \
-        --group \
-        --disabled-login \
-        --quiet \
-        nginx \
-    && mkdir -p \
-        /usr/share/nginx/html \
-        /etc/nginx_default/conf.d \
-        /etc/certs \
-        /var/log/nginx \
-        /var/run/nginx \
-    && mv -f /etc/nginx/html /usr/share/nginx/html_default \
-    && chown -R nginx:nginx /usr/share/nginx/html \
     && rm -rf \
         /etc/nginx/nginx.conf \
         /etc/nginx/nginx.conf.default \
@@ -302,28 +267,75 @@ RUN cd \
         /etc/nginx/mime.types.default \
         /etc/nginx/fastcgi_params.default \
         /etc/nginx/fastcgi.conf.default \
-    && mv -f /etc/nginx/* /etc/nginx_default \
-    && wget -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/nginx.conf \
-    && wget -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/conf.d/default.conf \
-    && wget -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/CMD-Shell \
-    && chmod +x /usr/bin/CMD-Shell \
     && ldd /usr/lib/libjemalloc* \
         /usr/bin/redis* \
+        /usr/bin/envsubst* \
         /usr/sbin/nginx* \
         /usr/lib/nginx/modules/*.so | \
         cut -d ">" -f 2 | \
         cut -d "(" -f 1 | \
-        sed '/:.*/d' | \
+        cut -d ":" -f 1 | \
         sed '/linux-vdso.*/d' | \
         sed '/not a dynamic executable.*/d' | \
         sed 's/^[ \t]*//g' | \
         sed 's/[ \t]*$//g' | \
         sort -u | \
-        xargs tar -cvhpPf run-deps.tar \
-    && apt purge --auto-remove -y $(cat build-deps.txt | grep "Unpacking " | cut -d " " -f 2) \
-    && apt install -y tzdata gettext-base \
+        tee software-deps.txt \
+    && readlink -f $(cat software-deps.txt) | \
+        sort -u | \
+        tee symlink-source.txt \
+    && cat software-deps.txt \
+        symlink-source.txt | \
+        sort -u | \
+        xargs tar -cvpPf soft-package.tar \
+    && mkdir -p \
+        /etc/redis \
+        /etc/redis_default \
+        /var/log/redis \
+        /var/run/redis \
+    && adduser  \
+        --system  \
+        --home /var/lib/redis \
+        --shell /bin/false \
+        --group \
+        --disabled-login \
+        --quiet \
+        redis \
+    && wget -O /etc/redis_default/redis.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/redis/redis.conf \
+    && chown redis:redis /etc/redis_default/redis.conf \
+    && chmod 640 /etc/redis_default/redis.conf \
+    && chown redis:adm /var/log/redis \
+    && chmod 02750 /var/log/redis \
+    && chown redis:redis /var/run/redis \
+    && chmod 750 /var/lib/redis \
+    && mkdir -p \
+        /usr/share/nginx/html \
+        /etc/nginx_default/conf.d \
+        /etc/certs \
+        /var/log/nginx \
+        /var/run/nginx \
+    && adduser \
+        --system \
+        --home /var/cache/nginx \
+        --shell /bin/false \
+        --group \
+        --disabled-login \
+        --quiet \
+        nginx \
+    && mv -f /etc/nginx/html /usr/share/nginx/html_default \
+    && chown -R nginx:nginx /usr/share/nginx/html \
+    && mv -f /etc/nginx/* /etc/nginx_default \
+    && wget -O /etc/nginx_default/nginx.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/nginx.conf \
+    && wget -O /etc/nginx_default/conf.d/default.conf https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/config/etc/nginx/conf.d/default.conf \
+    && wget -O /usr/bin/CMD-Shell https://raw.githubusercontent.com/Xaster/docker-nginx-debian/master/CMD-Shell \
+    && chmod +x /usr/bin/CMD-Shell \
+    && apt purge --auto-remove -y \
+        $(cat build-deps.txt | \
+	grep "Unpacking " | \
+	cut -d " " -f 2) \
+    && apt install -y tzdata \
     && apt clean \
-    && tar --skip-old-files -xpPf run-deps.tar \
+    && tar --skip-old-files -xpPf soft-package.tar \
     && rm -rf \
         $HOME/* \
         /var/lib/apt/lists/*\
